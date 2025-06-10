@@ -1,4 +1,5 @@
-# dropmoji
+# DropMoji
+"One-time emotional drops" | "Symbolic secrets, single serve" | "Drop it once, gone forever" | "Secret symbols, single use"
 
 **Typescript**, **NextJS**
 <br><br>

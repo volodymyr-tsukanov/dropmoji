@@ -1,25 +1,26 @@
 # Dev TODO
-## Setup & Configuration
+
+## T0. Setup & Configuration
 - [x] Initialize Next.js 15 project with TypeScript
-- [ ] Install required packages (Chakra UI, Mongoose, auth libraries)
-- [ ] Setup MongoDB connection
-- [ ] Configure environment variables (JWT_SECRET, MONGODB_URI, GIPHY_API_KEY)
-- [ ] Setup Chakra UI provider and theme
+- [x] Install required packages (Chakra UI, Mongoose, auth libraries)
+- [x] Setup MongoDB connection
+- [x] Configure environment variables (JWT_SECRET, MONGODB_URI, GIPHY_API_KEY)
+- [x] Setup Chakra UI provider and theme
 
-## Authentication System
-- [ ] Create User model (email, password, createdAt)
-- [ ] Implement bcrypt password hashing
-- [ ] Build JWT token generation/verification
-- [ ] Create auth middleware for protected routes
+## T1. Authentication System
+- [x] Create User model (email, password, createdAt)
+- [x] Implement bcrypt password hashing
+- [x] Build JWT token generation/verification
+- [x] Create auth middleware for protected routes
 
-## Landing/Login Page (`/`)
-- [ ] Design login/register form UI
-- [ ] Implement login API endpoint
-- [ ] Implement register API endpoint
-- [ ] Add form validation and error handling
-- [ ] Redirect authenticated users to dashboard
+## T2. Landing/Login Page (`/`)
+- [x] Design login/register form UI
+- [x] Implement login API endpoint
+- [x] Implement register API endpoint
+- [x] Add form validation and error handling
+- [x] Redirect authenticated users to dashboard
 
-## Dashboard Page (`/dashboard`)
+## T3. Dashboard Page (`/dashboard`)
 - [ ] Create protected route wrapper
 - [ ] Display user's created messages list
 - [ ] Show message status (viewed/unviewed)
@@ -27,7 +28,7 @@
 - [ ] Add "Create New Message" button
 - [ ] Implement message deletion for creators
 
-## Message Compose Page (`/dashboard/create`)
+## T4. Message Compose Page (`/dashboard/create`)
 - [ ] Create Message model (content, creator, viewToken, isViewed, expiresAt, response)
 - [ ] Build emoji picker integration
 - [ ] Implement Giphy search and selection
@@ -37,7 +38,7 @@
 - [ ] Show shareable link after creation
 - [ ] Add QR code generation for links
 
-## Message View Page (`/message/[token]`)
+## T5. Message View Page (`/message/[token]`)
 - [ ] Create public message viewing route
 - [ ] Implement one-time viewing logic
 - [ ] Display emoji or GIF content
@@ -47,21 +48,21 @@
 - [ ] Handle expired/invalid tokens
 - [ ] Add "Message has been destroyed" confirmation
 
-## API Routes
+## T6. API Routes
 - [ ] `/api/auth/login` - User authentication
 - [ ] `/api/auth/register` - User registration
 - [ ] `/api/messages` - Create message, list user messages
 - [ ] `/api/messages/[id]` - Get specific message details
 - [ ] `/api/messages/view/[token]` - View and burn message, save response
 
-## Components
+## T7. Components
 - [ ] `MessageComposer` - Emoji/GIF selection interface
 - [ ] `MessageList` - Display user's messages with status
 - [ ] `MessageViewer` - Render emoji/GIF content
 - [ ] `ShareModal` - Show link/QR code for sharing
 - [ ] `ProtectedRoute` - Auth wrapper component
 
-## Security & Polish
+## T19. Security & Polish
 - [ ] Add message expiration cleanup job
 - [ ] Implement rate limiting for message creation
 - [ ] Add loading states and error boundaries
@@ -69,7 +70,7 @@
 - [ ] Add confirmation dialogs for destructive actions
 - [ ] Test cross-browser compatibility
 
-## Testing & Deployment
+## T99. Testing & Deployment
 - [ ] Test message creation and viewing flow
 - [ ] Verify token burning mechanism
 - [ ] Test authentication edge cases

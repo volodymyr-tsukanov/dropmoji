@@ -1,0 +1,36 @@
+# Copyright (C) 2025  volodymyr-tsukanov  dropmoji
+# for the full copyright notice see the LICENSE file in the root of repository
+# app only + -it: podman run -it --rm --name nj --volume ./nextjs:/home/app -p 127.0.0.1:3005:3005 localhost/simple-nodejs:alpha ash
+version: '3.8'
+
+services:
+  mongodb:
+    image: docker.io/library/mongo:8.0-noble
+    container_name: dropmoji-mongo-db_cnt
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - ./init-mongo.df.js:/docker-entrypoint-initdb.d/init-mongo.js
+    networks:
+      - dropmoji-net
+
+  app:
+    image: localhost/simple-nodejs:alpha
+    container_name: dropmoji-nj-app_cnt
+    volumes:
+      - ./nextjs:/home/app
+    ports:
+      - "127.0.0.1:3005:3005"
+    command: tail -f /dev/null
+    depends_on:
+      - mongodb
+    networks:
+      - dropmoji-net
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/dropmoji  # use container name, not localhost
+
+
+networks:
+  dropmoji-net:
+    driver: bridge
+
