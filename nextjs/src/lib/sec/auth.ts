@@ -5,6 +5,7 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
 import { IAuthResponse } from '../consts';
+import { NextRequest, NextResponse } from 'next/server';
 
 
 export interface JWTPayload {
@@ -12,6 +13,7 @@ export interface JWTPayload {
   email: string;
   iat?: number;
   exp?: number;
+  token?: string;
 }
 
 export class AuthError extends Error {
@@ -79,20 +81,15 @@ export const extendToken = (oldToken: string): string | null => {
 }
 
 
-export const extractTokenFromHeader = (authHeader: string | null): string => {
-  if (!authHeader) {
-    throw new AuthError('Authorization header missing');
-  }
-
-  if (!authHeader.startsWith('Bearer ')) {
-    throw new AuthError('Invalid authorization format');
-  }
+export const extractTokenFromHeader = (authHeader: string | null): string | null => {
+  if (!authHeader)
+    return null;
+  if (!authHeader.startsWith('Bearer '))
+    return null;
 
   const token = authHeader.substring(7);
-  if (!token) {
-    throw new AuthError('Token missing');
-  }
-
+  if (!token || token.length < 9)
+    return null;
   return token;
 };
 
@@ -106,4 +103,16 @@ export function createAuthResponse(user: any, token: string): IAuthResponse {
     token,
     expiresIn: config.jwt.expiresIn,
   };
+}
+
+export function verifyRequest(req: NextRequest): NextResponse | JWTPayload {
+  try {
+    const token = extractTokenFromHeader(req.headers.get('Auth'));
+    if (!token) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    return { ...verifyToken(token), token };
+  } catch (err) {
+    if (err instanceof AuthError)
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    else throw err;
+  }
 }

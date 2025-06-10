@@ -15,9 +15,9 @@ export const config = {
   },
   jwt: {
     secret: getEnvVar('JWT_SECRET'),
-    expiresIn: '10m',
+    expiresIn: '100m',
     /** in secondds */
-    extendLimit: 60 * 7,  //7m
+    extendLimit: 60 * 60,  //60m
   },
   app: {
     url: getEnvVar('NEXTAUTH_URL', 'http://127.0.0.1:3005'),

@@ -1,6 +1,7 @@
 # Copyright (C) 2025  volodymyr-tsukanov  dropmoji
 # for the full copyright notice see the LICENSE file in the root of repository
 # app only + -it: podman run -it --rm --name nj --volume ./nextjs:/home/app -p 127.0.0.1:3005:3005 localhost/simple-nodejs:alpha ash
+
 version: '3.8'
 
 services:
@@ -27,8 +28,7 @@ services:
     networks:
       - dropmoji-net
     environment:
-      - MONGODB_URI=mongodb://mongodb:27017/dropmoji  # use container name, not localhost
-
+      - MONGODB_URI=mongodb://mongodb:27017/dropmoji
 
 networks:
   dropmoji-net:

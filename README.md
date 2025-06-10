@@ -1,5 +1,5 @@
 # DropMoji
-"One-time emotional drops" | "Symbolic secrets, single serve" | "Drop it once, gone forever" | "Secret symbols, single use"
+Share emoji and GIF messages that self-destruct after one view
 
 **Typescript**, **NextJS**
 <br><br>

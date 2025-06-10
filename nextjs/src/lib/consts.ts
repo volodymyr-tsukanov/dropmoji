@@ -16,3 +16,8 @@ export interface IAuthResponse {
   token: string;
   expiresIn: string;
 }
+
+
+export const CInsecureRandInt = ({ min, max }: { min?: number, max: number }) => {
+  return min ?? 0 + Math.random() * max;
+};

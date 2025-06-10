@@ -1,5 +1,4 @@
 # Dev TODO
-
 ## T0. Setup & Configuration
 - [x] Initialize Next.js 15 project with TypeScript
 - [x] Install required packages (Chakra UI, Mongoose, auth libraries)
@@ -21,57 +20,55 @@
 - [x] Redirect authenticated users to dashboard
 
 ## T3. Dashboard Page (`/dashboard`)
-- [ ] Create protected route wrapper
-- [ ] Display user's created messages list
-- [ ] Show message status (viewed/unviewed)
-- [ ] Display response emojis from viewers
-- [ ] Add "Create New Message" button
-- [ ] Implement message deletion for creators
+- [x] Create protected route wrapper
+- [x] Display user's created messages list
+- [x] Show message status (viewed/unviewed)
+- [x] Display response emojis from viewers
+- [x] Add "Create New Message" button
+- [x] Implement message deletion for creators
 
 ## T4. Message Compose Page (`/dashboard/create`)
-- [ ] Create Message model (content, creator, viewToken, isViewed, expiresAt, response)
-- [ ] Build emoji picker integration
-- [ ] Implement Giphy search and selection
-- [ ] Add content type toggle (emoji/gif)
-- [ ] Create message API endpoint
+- [x] Create Message model (content, creator, viewToken, isViewed, expiresAt, response)
+- [x] Build emoji picker integration
+- [ ] Implement GIF search and selection
+- [x] Create message API endpoint
 - [ ] Generate unique viewing tokens (UUID)
-- [ ] Show shareable link after creation
-- [ ] Add QR code generation for links
+- [x] Show shareable link after creation
+- [x] Add QR code generation for links
 
-## T5. Message View Page (`/message/[token]`)
-- [ ] Create public message viewing route
-- [ ] Implement one-time viewing logic
-- [ ] Display emoji or GIF content
-- [ ] Add emoji response selector for viewer
-- [ ] Send response emoji to message creator
-- [ ] Mark message as viewed and burn token
-- [ ] Handle expired/invalid tokens
-- [ ] Add "Message has been destroyed" confirmation
+## T5. Message View Page (`/view/[token]`)
+- [x] Create public message viewing route
+- [x] Implement one-time viewing logic
+- [x] Display emoji or GIF content
+- [x] Add emoji response selector for viewer
+- [x] Send response emoji to message creator
+- [x] Mark message as viewed
+- [x] Handle expired/invalid tokens
+- [x] Add "Message has been burned" confirmation
 
 ## T6. API Routes
-- [ ] `/api/auth/login` - User authentication
-- [ ] `/api/auth/register` - User registration
-- [ ] `/api/messages` - Create message, list user messages
-- [ ] `/api/messages/[id]` - Get specific message details
-- [ ] `/api/messages/view/[token]` - View and burn message, save response
+- [x] `/api/message` - Create message, list user messages
+- [x] `/api/message/[id]` - Manage message details
+- [x] `/api/message/view/[vtoken]` - View and burn message, save response
 
 ## T7. Components
-- [ ] `MessageComposer` - Emoji/GIF selection interface
-- [ ] `MessageList` - Display user's messages with status
-- [ ] `MessageViewer` - Render emoji/GIF content
-- [ ] `ShareModal` - Show link/QR code for sharing
-- [ ] `ProtectedRoute` - Auth wrapper component
+- [x] `CreateMessage` - Emoji/GIF selection interface
+- [x] `MessageList` - Display user's messages with status
+- [x] `MessageViewer` - Render emoji/GIF content
+- [x] `ShareModal` - Show link/QR code for sharing
+- [x] `ProtectedRoute` - Auth wrapper component
+
+## T8. Secrets
+- [x] Create `isSecret` option and Message content encryption
 
 ## T19. Security & Polish
 - [ ] Add message expiration cleanup job
 - [ ] Implement rate limiting for message creation
-- [ ] Add loading states and error boundaries
-- [ ] Responsive design for mobile devices
-- [ ] Add confirmation dialogs for destructive actions
-- [ ] Test cross-browser compatibility
+- [x] Add loading states and error boundaries
+- [x] Add confirmation dialogs for destructive actions
 
 ## T99. Testing & Deployment
 - [ ] Test message creation and viewing flow
-- [ ] Verify token burning mechanism
-- [ ] Test authentication edge cases
+- [x] Verify token burning mechanism
+- [x] Test authentication edge cases
 - [ ] Deploy to production environment
