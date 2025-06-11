@@ -86,7 +86,6 @@ export class SessionManager {
     return false;
   }
 
-
 // DRAFT
   public get messageDraft(): string | null {
     if (!this._storage) throw new SessionError('Manger::storage not set');

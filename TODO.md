@@ -30,9 +30,9 @@
 ## T4. Message Compose Page (`/dashboard/create`)
 - [x] Create Message model (content, creator, viewToken, isViewed, expiresAt, response)
 - [x] Build emoji picker integration
-- [ ] Implement GIF search and selection
+- [x] Implement GIF search and selection
 - [x] Create message API endpoint
-- [ ] Generate unique viewing tokens (UUID)
+- [x] Generate unique viewing tokens (4 part token currently has ~0.1% collisions per 10k)
 - [x] Show shareable link after creation
 - [x] Add QR code generation for links
 
@@ -63,12 +63,16 @@
 
 ## T19. Security & Polish
 - [ ] Add message expiration cleanup job
-- [ ] Implement rate limiting for message creation
+- [ ] Implement rate limiting for message creation & gifs
 - [x] Add loading states and error boundaries
 - [x] Add confirmation dialogs for destructive actions
+- [ ] Imports audit (dont trust 'use client')
+- [ ] Reorganize `CreateMessage` page to be desktop oriented
+- [ ] Stylize `GifPicker`
+- [ ] Reorganize and update loading skeletons for `ViewMessage`
 
 ## T99. Testing & Deployment
-- [ ] Test message creation and viewing flow
+- [x] Test message creation and viewing flow
 - [x] Verify token burning mechanism
 - [x] Test authentication edge cases
 - [ ] Deploy to production environment

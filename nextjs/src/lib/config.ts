@@ -19,6 +19,9 @@ export const config = {
     /** in secondds */
     extendLimit: 60 * 60,  //60m
   },
+  providers: {
+    tenor: getEnvVar('API_TENOR')
+  },
   app: {
     url: getEnvVar('NEXTAUTH_URL', 'http://127.0.0.1:3005'),
     environment: getEnvVar('NODE_ENV', 'development'),
@@ -26,12 +29,14 @@ export const config = {
 } as const; // 'as const' makes it readonly
 
 
-// Optional: Validate on startup
+/** Optional: Validate on startup */
 export function validateConfig() {
   try {
     // This will throw if any required env vars are missing
     config.mongodb.uri;
     config.jwt.secret;
+    config.providers.tenor;
+    config.app.url;
 
     console.log('✅ Configuration validated successfully');
   } catch (error) {

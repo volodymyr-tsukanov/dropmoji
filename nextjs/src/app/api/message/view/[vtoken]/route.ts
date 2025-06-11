@@ -42,7 +42,6 @@ export async function GET(
 
     let messageContent = message.content;
     if (vtoken.startsWith(PREFIX_CRYPTED)) {
-      console.log(messageContent);
       try {
         messageContent = decryptMessageContent(messageContent, vtoken);
       } catch (err) {
@@ -52,7 +51,6 @@ export async function GET(
           { status: 402 }
         );
       }
-      console.log(messageContent);
     }
 
     return NextResponse.json({

@@ -222,7 +222,7 @@ export default function DashboardPage({ sessionManager }: IProtectedPageProps) {
           {messages.map((message) => {
             const messageId = message._id as string;
             const messageIsSecret = !message.content.startsWith('[');
-            const messageContent = messageIsSecret ? '**Secret 🔐🤫**' : JSON.parse(message.content).join('');
+            const messageContent: string = messageIsSecret ? '**Secret 🔐🤫**' : JSON.parse(message.content).map((e) => e.startsWith('g') ? ' GIF ' : e).join('');
             const messageShareUrl = `${window.location.origin}/view/${message.viewToken}`;
             const messageIsViewed = message.viewedAt !== null;
             const messageIsExpired = new Date(message.expiresAt) < new Date();
@@ -241,7 +241,7 @@ export default function DashboardPage({ sessionManager }: IProtectedPageProps) {
               <MessageListTile
                 key={messageId}
                 content={
-                  <Text colorPalette={messageContent.startsWith('**') ? 'warning' : undefined} fontSize="xl" fontWeight="bold" overflow="clip">
+                  <Text colorPalette={messageIsSecret ? 'warning' : undefined} fontSize="xl" fontWeight="bold" overflow="clip">
                     {messageContent}
                   </Text>
                 }

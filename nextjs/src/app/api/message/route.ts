@@ -7,7 +7,7 @@ import { verifyRequest } from '@/lib/sec/auth';
 import Message, { IMessage } from '@/models/Message';
 import { config } from '@/lib/config';
 import connectDB from '@/lib/db/mongo';
-import { encryptMessage, PREFIX_CRYPTED } from '@/lib/sec/crypton';
+import { encryptMessage, insecureViewToken, PREFIX_CRYPTED } from '@/lib/sec/crypton';
 
 
 /** List user's messages (Auth) */
@@ -68,7 +68,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (secrecy) {  //use crypton
       vtoken = encryptMessage(message);
     } else {
-      vtoken = 'test-' + Math.random();  //TODO generate fr
+      let parts = 2;
+      do {
+        vtoken = insecureViewToken(parts);
+        const msgCollision = await Message.findOne({ viewToken: vtoken });
+        if (!msgCollision) {
+          parts = 0;
+          break;
+        } else console.warn(`create new msg: vtoken collision ${parts}`);
+        parts += 1;
+      } while (parts > 0);
       message.viewToken = vtoken;
     }
     await message.save();

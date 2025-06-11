@@ -8,10 +8,10 @@ services:
   mongodb:
     image: docker.io/library/mongo:8.0-noble
     container_name: dropmoji-mongo-db_cnt
-    ports:
-      - "127.0.0.1:27017:27017"
     volumes:
       - ./init-mongo.df.js:/docker-entrypoint-initdb.d/init-mongo.js
+    ports:
+      - "127.0.0.1:27017:27017"
     networks:
       - dropmoji-net
 
@@ -23,14 +23,28 @@ services:
     ports:
       - "127.0.0.1:3005:3005"
     command: tail -f /dev/null
-    depends_on:
-      - mongodb
     networks:
       - dropmoji-net
+      - tunnel-net
     environment:
       - MONGODB_URI=mongodb://mongodb:27017/dropmoji
+    depends_on:
+      - mongodb
+
+  tunnel:
+    image: docker.io/ngrok/ngrok:alpine
+    container_name: dropmoji-nj-tl_cnt
+    volumes:
+      - ./init-ngrok.df.sec.yml:/etc/ngrok.yml
+    networks:
+      - tunnel-net
+    command: ngrok http app:3005 --config=/etc/ngrok.yml
+    depends_on:
+      - app
+
 
 networks:
   dropmoji-net:
     driver: bridge
-
+  tunnel-net:
+    driver: bridge

@@ -9,16 +9,18 @@ import {
   Heading,
   Button,
   Switch, SwitchCheckedChangeDetails,
-  Textarea,
   Slider, SliderValueChangeDetails,
 } from '@chakra-ui/react';
 import { MdSecurity } from 'react-icons/md';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { IGifRecord } from '@/lib/consts';
 import { IProtectedPageProps } from '../Protected';
 import { Toaster, toaster } from '@/components/ui/toaster';
 import ShareModalDialog from '../modal/ShareDialog';
+import GifPicker from '../modal/GifPicker';
+import MessageContentTile from '../tiles/MessageContent';
 
 
 const showToastError = (title: string) =>
@@ -39,40 +41,40 @@ const showToastInfo = (title: string, description: string) =>
 
 
 // MEMO
-const LEmojiPickerWrapper = memo(({ onEmojiClick }: {
+const MEmojiPickerWrapper = memo(({ onEmojiClick }: {
   onEmojiClick: (emojiData: EmojiClickData) => void;
 }) => (
-  <Center>
-    <EmojiPicker
-      onEmojiClick={onEmojiClick}
-      lazyLoadEmojis
-      width="-webkit-fill-available"
-    />
-  </Center>
-)); LEmojiPickerWrapper.displayName = 'LEmojiPickerWrapper';
-
-const LMsgContent = memo(({ contentString, onEmojiClick }: {
-  contentString: string;
+  <EmojiPicker
+    onEmojiClick={onEmojiClick}
+    lazyLoadEmojis
+    width="-webkit-fill-available"
+  />
+)); MEmojiPickerWrapper.displayName = 'MEmojiPickerWrapper';
+const MGifPickerWrapper = memo(({ token, onGifSelect }: {
+  token: string;
+  onGifSelect: (gif: IGifRecord) => void;
+}) => (
+  <GifPicker token={token} onGifSelect={onGifSelect} />
+)); MGifPickerWrapper.displayName = 'MGifPickerWrapper';
+const LMsgContent = memo(({ token, content, onEmojiClick, onGifSelect }: {
+  token: string;
+  content: string[];
   onEmojiClick: (emojiData: EmojiClickData) => void;
+  onGifSelect: (gif: IGifRecord) => void;
 }) => (
   <Card.Root mx="auto">
     <Card.Title fontSize="larger">Message content:</Card.Title>
     <Card.Body>
-      <Textarea
-        value={contentString}
-        readOnly={true}
-        resize="none"
-        size="lg"
-        fontSize="xxx-large"
-        lineHeight="inherit"
-        rows={2}
-      />
-      <LEmojiPickerWrapper onEmojiClick={onEmojiClick} />
+      <MessageContentTile content={content} />
+      <Center>
+        <MEmojiPickerWrapper onEmojiClick={onEmojiClick} />
+        <MGifPickerWrapper token={token} onGifSelect={onGifSelect} />
+      </Center>
     </Card.Body>
   </Card.Root>
 )); LMsgContent.displayName = 'LMsgContent';
 
-const LMsgOptions = memo(({ expiresIn, handleExpiresInChange, isSecret, handleIsSecretChange }: {
+const MMsgOptions = memo(({ expiresIn, handleExpiresInChange, isSecret, handleIsSecretChange }: {
   expiresIn: number[];
   handleExpiresInChange: (details: SliderValueChangeDetails) => void;
   isSecret: boolean;
@@ -122,14 +124,14 @@ const LMsgOptions = memo(({ expiresIn, handleExpiresInChange, isSecret, handleIs
       <Switch.Control>
         <Switch.Thumb>
           <Switch.ThumbIndicator>
-            <Icon><MdSecurity /></Icon>
+            <Icon color="black"><MdSecurity /></Icon>
           </Switch.ThumbIndicator>
         </Switch.Thumb>
       </Switch.Control>
       <Switch.Label fontSize="md">{isSecret ? 'Secret' : 'Ordinary'}</Switch.Label>
     </Switch.Root>
   </HStack>);
-}); LMsgOptions.displayName = 'LMsgOptions';
+}); MMsgOptions.displayName = 'MMsgOptions';
 
 
 export default function CreateMessagePage({ sessionManager }: IProtectedPageProps) {
@@ -140,7 +142,6 @@ export default function CreateMessagePage({ sessionManager }: IProtectedPageProp
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const router = useRouter();
 
-  const contentString = useMemo(() => content.join(' '), [content]);
   const handleEmojiClick = useCallback((emojiData: EmojiClickData) => {
     if (content.length >= 100) {
       showToastInfo('Limit reached', 'You can only add up to 100 emojis.');
@@ -148,16 +149,23 @@ export default function CreateMessagePage({ sessionManager }: IProtectedPageProp
     }
     setContent((prev) => [...prev, emojiData.emoji]);
   }, [content]);
+  const handleGifSelect = useCallback((gif: IGifRecord) => {
+    if (content.length >= 100) {
+      showToastInfo('Limit reached', 'You can only add up to 100 emojis.');
+      return;
+    }
+    setContent((prev) => [...prev, gif.id]);  //?
+  }, [content]);
   const handleExpiresInChange = useCallback(
     (details: SliderValueChangeDetails) => setExpiresIn(details.value),
     []
   );
 
-  if (!sessionManager) {
+  if (!sessionManager || !sessionManager.token) {
     router.replace('/auth');
     return
   }
-  const token = sessionManager!.token;
+  const token = sessionManager.token;
 
   const handleSubmit = async () => {
     if (isSubmitting === true) return;
@@ -208,13 +216,16 @@ export default function CreateMessagePage({ sessionManager }: IProtectedPageProp
     }
   };
 
-
   return (
     <Box p={8} maxW="540px" mx="auto" colorPalette="brand">
       <Heading mb={4}>Create new Drop</Heading>
       <VStack align="stretch">
-        <LMsgContent contentString={contentString} onEmojiClick={handleEmojiClick} />
-        <LMsgOptions
+        <LMsgContent
+          token={token}
+          content={content}
+          onEmojiClick={handleEmojiClick}
+          onGifSelect={handleGifSelect} />
+        <MMsgOptions
           expiresIn={expiresIn}
           handleExpiresInChange={handleExpiresInChange}
           isSecret={isSecret}

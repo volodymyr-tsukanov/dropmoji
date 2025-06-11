@@ -8,7 +8,7 @@ import {
   Badge,
   Button,
   Heading,
-  Text, Textarea
+  Text
 } from '@chakra-ui/react';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { memo, useEffect, useMemo, useState } from 'react';
@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { IMessage } from '@/models/Message';
 import { Toaster, toaster } from '@/components/ui/toaster';
 import AlertModalDialog from '../modal/AlertDialog';
+import MessageContentTile from '../tiles/MessageContent';
 
 
 const showToastError = (title: string) =>
@@ -51,7 +52,7 @@ export default function ViewMessagePage({ vtoken }: ViewMessageProps) {
   const [isSending, setIsSending] = useState(false);
   const router = useRouter();
 
-  const contentString = useMemo<string | null>(() => message ? JSON.parse(message.content).join('') : null, [message]);
+  const content = useMemo<string[] | null>(() => message ? JSON.parse(message.content) : null, [message]);
 
   useEffect(() => {
     const fetchMessage = async () => {
@@ -73,7 +74,7 @@ export default function ViewMessagePage({ vtoken }: ViewMessageProps) {
 
     // Warn on reload
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if(vtoken.length>0){
+      if (vtoken.length > 0) {
         e.preventDefault();
         e.returnValue = '-'; // Required for Chrome to show the warning
       }
@@ -126,15 +127,7 @@ export default function ViewMessagePage({ vtoken }: ViewMessageProps) {
     <Box maxW="xl" mx="auto" mt={10} p={6} borderWidth="1px" borderRadius="lg">
       <VStack colorPalette="brand">
         <Heading size="md">Message Content</Heading>
-        <Textarea
-          value={contentString!}
-          readOnly={true}
-          resize="none"
-          size="lg"
-          fontSize="xxx-large"
-          lineHeight="inherit"
-          rows={2}
-        />
+        <MessageContentTile content={content!} />
         <HStack>
           <Text fontSize="sm" color="gray.500">
             Expires at: {new Date(message.expiresAt).toLocaleString()}
