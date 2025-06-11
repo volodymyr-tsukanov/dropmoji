@@ -4,7 +4,7 @@
 */
 'use client'
 import {
-  Box, VStack, HStack, Flex, Center,
+  Box, Stack, VStack, HStack, Flex, Center, Grid,
   Card, Icon,
   Heading,
   Button,
@@ -217,20 +217,46 @@ export default function CreateMessagePage({ sessionManager }: IProtectedPageProp
   };
 
   return (
-    <Box p={8} maxW="540px" mx="auto" colorPalette="brand">
-      <Heading mb={4}>Create new Drop</Heading>
-      <VStack align="stretch">
-        <LMsgContent
-          token={token}
-          content={content}
-          onEmojiClick={handleEmojiClick}
-          onGifSelect={handleGifSelect} />
+    <Box
+      px={{ base: 4, md: 8 }}
+      py={8}
+      maxW={{ base: '100%', md: '2xl', lg: '4xl' }}
+      mx="auto"
+      colorPalette="brand"
+    >
+      <Heading mb={6} fontSize={{ base: '2xl', md: '3xl' }}>Create new Drop</Heading>
+      <Stack>
+        {/* Content Input Area */}
+        <Card.Root>
+          <Card.Title fontSize="lg">Message content:</Card.Title>
+          <Card.Body>
+            <MessageContentTile content={content} />
+
+            {/* Emoji & GIF Picker Layout */}
+            <Grid
+              templateColumns={{ base: '1fr', md: '1fr 1fr' }}
+              gap={4}
+              mt={4}
+              alignItems="start"
+            >
+              <Box overflow="hidden">
+                <MEmojiPickerWrapper onEmojiClick={handleEmojiClick} />
+              </Box>
+              <Box overflow="hidden">
+                <MGifPickerWrapper token={token} onGifSelect={handleGifSelect} />
+              </Box>
+            </Grid>
+          </Card.Body>
+        </Card.Root>
+
+        {/* Message Options */}
         <MMsgOptions
           expiresIn={expiresIn}
           handleExpiresInChange={handleExpiresInChange}
           isSecret={isSecret}
-          handleIsSecretChange={(details) => setIsSecret(details.checked)} />
+          handleIsSecretChange={(e) => setIsSecret(e.checked)} />
 
+        {/* Submit Button */}
         <Flex justify="flex-end" colorPalette="accent">
           <Button
             variant="solid"
@@ -241,17 +267,22 @@ export default function CreateMessagePage({ sessionManager }: IProtectedPageProp
             Create Message
           </Button>
         </Flex>
-        {shareUrl && <ShareModalDialog
-          shareUrl={shareUrl}
-          description={isSecret ? 'Save this link now, you wont be able to see it again later' : undefined}
-          isOpen={true}
-          onClose={() => {
-            router.replace('/dashboard');
-            setShareUrl(null);
-            setIsSubmitting(true);
-          }}
-        />}
-      </VStack>
+
+        {/* Share Modal */}
+        {shareUrl && (
+          <ShareModalDialog
+            shareUrl={shareUrl}
+            description={isSecret ? 'Save this link now, you won’t be able to see it again later' : undefined}
+            isOpen={true}
+            onClose={() => {
+              router.replace('/dashboard');
+              setShareUrl(null);
+              setIsSubmitting(true);
+            }}
+          />
+        )}
+      </Stack>
+
       <Toaster />
     </Box>
   );

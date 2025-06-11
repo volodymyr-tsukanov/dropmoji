@@ -4,7 +4,7 @@
 */
 'use client'
 import {
-  Box, VStack, HStack, Spacer,
+  Box, Flex, Stack, VStack, HStack, SimpleGrid, Spacer,
   Card,
   Badge, Status,
   Icon,
@@ -185,7 +185,7 @@ export default function DashboardPage({ sessionManager }: IProtectedPageProps) {
           onCreate={handleCreateNewMessage}
           isCreating={status.action === DashboardPageAction.create} />
         <Box maxW="xl" mx="auto" mt={10} p={6} overflowY="auto" borderWidth="1px" borderRadius="lg">
-          <VStack>
+          <Stack>
             {Array(CInsecureRandInt({ min: 3, max: 9 })).fill(null).map((_, index) => (
               <MessageListTile
                 key={index}
@@ -205,76 +205,90 @@ export default function DashboardPage({ sessionManager }: IProtectedPageProps) {
                 isDisabled
               />
             ))}
-          </VStack>
+          </Stack>
         </Box>
         <Toaster />
       </>
     );
   }
   return (
-    <Box maxH="100vh">
+    <Flex direction="column" maxH="100vh" px={{ base: 4, md: 8, lg: 16 }}>
       <LDashboardHeader
         userEmail={user.email}
         onCreate={handleCreateNewMessage}
         isCreating={status.action === DashboardPageAction.create} />
-      <Box maxW="xl" mx="auto" mt={10} p={6} borderWidth="1px" borderRadius="lg">
-        <VStack maxH="60vh" overflowY="auto" colorPalette="accent">
-          {messages.map((message) => {
-            const messageId = message._id as string;
-            const messageIsSecret = !message.content.startsWith('[');
-            const messageContent: string = messageIsSecret ? '**Secret 🔐🤫**' : JSON.parse(message.content).map((e) => e.startsWith('g') ? ' GIF ' : e).join('');
-            const messageShareUrl = `${window.location.origin}/view/${message.viewToken}`;
-            const messageIsViewed = message.viewedAt !== null;
-            const messageIsExpired = new Date(message.expiresAt) < new Date();
+      <Box
+        overflow="hidden"
+        maxW={{ base: 'xl', md: '3xl', lg: '6xl' }}
+        mx="auto"
+        mt={10}
+        p={{ base: 4, md: 6 }}
+        borderWidth="1px"
+        borderRadius="lg"
+      >
+        <Box
+          overflowY="auto"
+          maxH="calc(100vh - 222px)" // adjust based on actual header height
+          pr={2} // prevent scrollbar overlay
+        >
+          <SimpleGrid overflowY="auto" columns={{ base: 1, md: 2 }}>
+            {messages.map((message) => {
+              const messageId = message._id as string;
+              const messageIsSecret = !message.content.startsWith('[');
+              const messageContent: string = messageIsSecret ? '**Secret 🔐🤫**' : JSON.parse(message.content).map((e) => e.startsWith('g') ? ' GIF ' : e).join('');
+              const messageShareUrl = `${window.location.origin}/view/${message.viewToken}`;
+              const messageIsViewed = message.viewedAt !== null;
+              const messageIsExpired = new Date(message.expiresAt) < new Date();
 
-            const statusLabel = messageIsViewed
-              ? 'Viewed'
-              : messageIsExpired
-                ? 'Expired'
-                : 'Pending';
-            const statusColor = messageIsViewed
-              ? 'green'
-              : messageIsExpired
-                ? 'red'
-                : 'yellow';
-            return (
-              <MessageListTile
-                key={messageId}
-                content={
-                  <Text colorPalette={messageIsSecret ? 'warning' : undefined} fontSize="xl" fontWeight="bold" overflow="clip">
-                    {messageContent}
-                  </Text>
-                }
-                status={
-                  <Status.Root colorPalette={statusColor}>
-                    <Status.Indicator />
-                    {statusLabel}
-                  </Status.Root>
-                }
-                metadata={
-                  message.viewedAt ? (
-                    <VStack>
-                      <Text fontSize="sm">
-                        Viewed at: <Badge colorPalette="accent" variant="outline" size="md">{new Date(message.viewedAt).toLocaleString()}</Badge>
-                      </Text>
-                      {message.response && (
-                        <Text key={`mr-${message.response}`}>
-                          Responded with: <Badge variant="plain" size="lg" fontSize="xx-large">{message.response}</Badge>
+              const statusLabel = messageIsViewed
+                ? 'Viewed'
+                : messageIsExpired
+                  ? 'Expired'
+                  : 'Pending';
+              const statusColor = messageIsViewed
+                ? 'green'
+                : messageIsExpired
+                  ? 'red'
+                  : 'yellow';
+              return (
+                <MessageListTile
+                  key={messageId}
+                  content={
+                    <Text colorPalette={messageIsSecret ? 'warning' : undefined} fontSize="xl" fontWeight="bold" overflow="clip">
+                      {messageContent}
+                    </Text>
+                  }
+                  status={
+                    <Status.Root colorPalette={statusColor}>
+                      <Status.Indicator />
+                      {statusLabel}
+                    </Status.Root>
+                  }
+                  metadata={
+                    message.viewedAt ? (
+                      <VStack>
+                        <Text fontSize="sm">
+                          Viewed at: <Badge colorPalette="accent" variant="outline" size="md">{new Date(message.viewedAt).toLocaleString()}</Badge>
                         </Text>
-                      )}
-                    </VStack>
-                  ) : undefined
-                }
-                onDelete={() => setStatus({ action: DashboardPageAction.delete, arg: messageId })}
-                onShare={() => setTargetShareUrl(messageShareUrl)}
-                isDeleting={status.action === DashboardPageAction.delete && status.arg === messageId}
-                cantShare={messageIsSecret}
-                isDisabled={messageIsViewed}
-                isExpired={messageIsExpired}
-              />
-            );
-          })}
-        </VStack>
+                        {message.response && (
+                          <Text key={`mr-${message.response}`}>
+                            Responded with: <Badge variant="plain" size="lg" fontSize="xx-large">{message.response}</Badge>
+                          </Text>
+                        )}
+                      </VStack>
+                    ) : undefined
+                  }
+                  onDelete={() => setStatus({ action: DashboardPageAction.delete, arg: messageId })}
+                  onShare={() => setTargetShareUrl(messageShareUrl)}
+                  isDeleting={status.action === DashboardPageAction.delete && status.arg === messageId}
+                  cantShare={messageIsSecret}
+                  isDisabled={messageIsViewed}
+                  isExpired={messageIsExpired}
+                />
+              );
+            })}
+          </SimpleGrid>
+        </Box>
         {status.action === DashboardPageAction.delete && <AlertModalDialog title="Delete Message" message="fr delete?" isOpen={status.action === DashboardPageAction.delete} onClose={(wasConfirmed) => {
           if (wasConfirmed) handleDelete(status.arg);
           else setStatus({ action: DashboardPageAction.none, arg: '' });
@@ -288,6 +302,6 @@ export default function DashboardPage({ sessionManager }: IProtectedPageProps) {
         )}
       </Box>
       <Toaster />
-    </Box>
+    </Flex>
   );
 };
