@@ -11,22 +11,33 @@ import {
   Input,
   Stack,
   Text,
-} from "@chakra-ui/react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+} from "@chakra-ui/react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Toaster, toaster } from '../ui/toaster';
 
 
 export default function HomePage() {
-  const [viewToken, setViewToken] = useState('')
-  const router = useRouter()
+  const [viewToken, setViewToken] = useState('');
+  const router = useRouter();
 
   const handleCreate = () => {
-    router.push("/auth")
+    router.push("/auth");
   }
   const handleView = () => {
-    const vtoken = viewToken.trim();
-    if (vtoken.length < 9) return
-    router.push(`/view/${encodeURIComponent(vtoken)}`)
+    let vtoken = viewToken.trim();
+    if (vtoken.startsWith('http'))
+      vtoken = vtoken.split('/').pop()!;
+    if (vtoken.length < 5) {
+      toaster.create({
+        type: 'info',
+        title: 'Malformed ViewToken',
+        duration: 4000,
+        closable: true
+      });
+      return;
+    }
+    router.push(`/view/${encodeURIComponent(vtoken)}`);
   }
 
   return (
@@ -69,6 +80,7 @@ export default function HomePage() {
           </Stack>
         </Box>
       </Stack>
+      <Toaster />
     </Container>
   );
 }

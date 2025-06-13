@@ -40,24 +40,26 @@ export default function MessageContentTile({ content }: MessageContentTileProps)
   }, []);
 
   useEffect(() => {
-    content.filter(c => c.startsWith('g')).forEach(id => {
-      if (!gifStates[id]) {
+    const gifIdsToLoad = content.filter(id => id.startsWith('g') && !gifStates[id]);
+
+    if (gifIdsToLoad.length === 0) return;
+
+    gifIdsToLoad.forEach(id => {
+      setGifStates(prev => ({
+        ...prev,
+        [id]: { loading: true, gif: null, error: null }
+      }));
+
+      fetchGif(id).then(gif => {
         setGifStates(prev => ({
           ...prev,
-          [id]: { loading: true, gif: null, error: null }
+          [id]: {
+            loading: false,
+            gif,
+            error: gif ? null : 'Failed to fetch GIF'
+          }
         }));
-
-        fetchGif(id).then(gif => {
-          setGifStates(prev => ({
-            ...prev,
-            [id]: {
-              loading: false,
-              gif,
-              error: gif ? null : 'Failed to load GIF'
-            }
-          }));
-        });
-      }
+      });
     });
   }, [content, fetchGif, gifStates]);
 
@@ -70,7 +72,9 @@ export default function MessageContentTile({ content }: MessageContentTileProps)
           const gifState = gifStates[c];
           if (!gifState || gifState.loading) {
             return (
-              <SkeletonCircle colorPalette="success" size="70" key={`mc-${index}`} />
+              <Box key={`mc-${index}`} width="100%">
+                <SkeletonCircle colorPalette="success" size="135px" />
+              </Box>
             );
           }
           if (gifState.error) {

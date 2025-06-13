@@ -37,7 +37,7 @@ export default function MessageListTile({
     <Card.Root
       variant="outline"
       width="100%"
-      p="1"
+      m="1" p="1"
       borderWidth="1px" borderRadius="md"
       colorPalette={isExpired ? "orange" : undefined}
       size={isExpired ? "sm" : "md"}>

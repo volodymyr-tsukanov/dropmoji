@@ -47,18 +47,19 @@ const showToastInfo = (title: string, description: string) =>
 
 
 // MEMO
-interface LDashboardHeaderProps {
+interface MDashboardHeaderProps {
   userEmail: string;
   onCreate: () => void;
   isCreating: boolean;
+  onLogout: () => void;
 }
-const LDashboardHeader = memo(({ userEmail, onCreate, isCreating }: LDashboardHeaderProps) => (
+const MDashboardHeader = memo(({ userEmail, onCreate, isCreating, onLogout }: MDashboardHeaderProps) => (
   <Card.Root variant="elevated" mb="1.5" position="sticky">
     <Card.Title m={4}>
       <HStack>
         <>Wassup, <Badge variant="subtle" size="md" fontSize="large">{userEmail}</Badge>!</>
         <Spacer />
-        <Icon size="2xl" color="tomato"><MdSupervisorAccount /></Icon>
+        <Icon size="2xl" color="tomato" onClick={onLogout}><MdSupervisorAccount /></Icon>
       </HStack>
     </Card.Title>
     <Card.Body alignItems="center">
@@ -74,8 +75,7 @@ const LDashboardHeader = memo(({ userEmail, onCreate, isCreating }: LDashboardHe
     </Card.Body>
   </Card.Root>
 ));
-LDashboardHeader.displayName = 'LDashboardHeader';
-
+MDashboardHeader.displayName = 'MDashboardHeader';
 
 
 export default function DashboardPage({ sessionManager }: IProtectedPageProps) {
@@ -144,6 +144,11 @@ export default function DashboardPage({ sessionManager }: IProtectedPageProps) {
   const user = sessionManager.user!;
 
 
+  const handleLogout = () => {
+    setLoading(true);
+    sessionManager.invalidateToken();
+    router.replace('/');
+  };
   const handleDelete = async (messageId: string) => {
     try {
       const response = await fetch(`/api/message/${messageId}`, {
@@ -180,10 +185,11 @@ export default function DashboardPage({ sessionManager }: IProtectedPageProps) {
   if (loading) {
     return (
       <>
-        <LDashboardHeader
+        <MDashboardHeader
           userEmail={user.email}
-          onCreate={handleCreateNewMessage}
-          isCreating={status.action === DashboardPageAction.create} />
+          onCreate={() => { }}
+          isCreating
+          onLogout={handleLogout} />
         <Box maxW="xl" mx="auto" mt={10} p={6} overflowY="auto" borderWidth="1px" borderRadius="lg">
           <Stack>
             {Array(CInsecureRandInt({ min: 3, max: 9 })).fill(null).map((_, index) => (
@@ -203,6 +209,10 @@ export default function DashboardPage({ sessionManager }: IProtectedPageProps) {
                   </>
                 }
                 isDisabled
+                isDeleting={false}
+                isExpired
+                cantShare
+                onDelete={() => { }} onShare={() => { }}
               />
             ))}
           </Stack>
@@ -213,10 +223,11 @@ export default function DashboardPage({ sessionManager }: IProtectedPageProps) {
   }
   return (
     <Flex direction="column" maxH="100vh" px={{ base: 4, md: 8, lg: 16 }}>
-      <LDashboardHeader
+      <MDashboardHeader
         userEmail={user.email}
         onCreate={handleCreateNewMessage}
-        isCreating={status.action === DashboardPageAction.create} />
+        isCreating={status.action === DashboardPageAction.create}
+        onLogout={handleLogout} />
       <Box
         overflow="hidden"
         maxW={{ base: 'xl', md: '3xl', lg: '6xl' }}
@@ -235,7 +246,7 @@ export default function DashboardPage({ sessionManager }: IProtectedPageProps) {
             {messages.map((message) => {
               const messageId = message._id as string;
               const messageIsSecret = !message.content.startsWith('[');
-              const messageContent: string = messageIsSecret ? '**Secret 🔐🤫**' : JSON.parse(message.content).map((e) => e.startsWith('g') ? ' GIF ' : e).join('');
+              const messageContent: string = messageIsSecret ? '**Secret 🔐🤫**' : JSON.parse(message.content).map((e: string) => e.startsWith('g') ? ' GIF ' : e).join('');
               const messageShareUrl = `${window.location.origin}/view/${message.viewToken}`;
               const messageIsViewed = message.viewedAt !== null;
               const messageIsExpired = new Date(message.expiresAt) < new Date();

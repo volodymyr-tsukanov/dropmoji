@@ -38,9 +38,8 @@ services:
       - ./init-ngrok.df.sec.yml:/etc/ngrok.yml
     networks:
       - tunnel-net
-    command: ngrok http app:3005 --config=/etc/ngrok.yml
-    depends_on:
-      - app
+    command: tail -f /dev/null
+#ngrok http app:3005 --config=/etc/ngrok.yml
 
 
 networks:

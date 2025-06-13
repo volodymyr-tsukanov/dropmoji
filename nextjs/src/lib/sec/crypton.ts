@@ -64,7 +64,7 @@ export const insecureViewToken = (parts: number): string => {
     'goofy', 'yapping', 'silly', 'loyal', 'brave', 'celestial', 'horny', 'popular', 'funky' //!INAPPROPRIATE
   ]; const aLng = ADJECTIVES.length;
   const CONCATS = [
-    '.', '+', '=', ':', '@', '!', '$', ',', ';', '%', '*'
+    '-', '_', '.', '~'
   ]; const cLng = CONCATS.length;
 
   const prm = new Primero();
