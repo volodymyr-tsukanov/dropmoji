@@ -20,7 +20,7 @@ export async function GET(
 ): Promise<NextResponse> {
   try {
     const { vtoken } = await params;
-    if (!vtoken || vtoken.length < 9) {
+    if (!vtoken || vtoken.length < 4) {
       return NextResponse.json(
         { success: false, error: 'ViewToken is invalid' },
         { status: 401 }

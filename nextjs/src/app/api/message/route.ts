@@ -5,7 +5,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyRequest } from '@/lib/sec/auth';
 import Message, { IMessage } from '@/models/Message';
-import { config } from '@/lib/config';
 import connectDB from '@/lib/db/mongo';
 import { encryptMessage, insecureViewToken, PREFIX_CRYPTED } from '@/lib/sec/crypton';
 
@@ -87,7 +86,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       success: true,
       message: {
         id: message._id,
-        shareUrl: `${config.app.url}/view/${vtoken}`,
+        vtoken: vtoken,
         expiresAt: message.expiresAt,
         createdAt: message.createdAt,
       }

@@ -200,7 +200,7 @@ export default function CreateMessagePage({ sessionManager }: IProtectedPageProp
           closable: true,
         });
         const _draft = sessionManager.messageDraft; //removes draft
-        setShareUrl(result.message.shareUrl);
+        setShareUrl(`${window.location.origin}/view/${result.message.vtoken}`);
       } else if (res.status === 401) {
         sessionManager.invalidateToken();
         router.replace('/auth');

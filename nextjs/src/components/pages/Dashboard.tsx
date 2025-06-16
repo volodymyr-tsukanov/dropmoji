@@ -107,7 +107,7 @@ export default function DashboardPage({ sessionManager }: IProtectedPageProps) {
           const result = await res.json();
           if (result.success) {
             showToastInfo('Draft Message Created', 'The last drafted message was created');
-            setTargetShareUrl(result.message.shareUrl);
+            setTargetShareUrl(`${window.location.origin}/${result.message.vtoken}`);
           } else {
             sessionManager.messageDraft = draft;
             showToastError('Failed to create drafted Message. Reload the page');
