@@ -9,7 +9,7 @@ services:
     image: docker.io/library/mongo:8.0-noble
     container_name: dropmoji-mongo-db_cnt
     volumes:
-      - ./init-mongo.df.js:/docker-entrypoint-initdb.d/init-mongo.js
+      - ./init-mongo.df.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     ports:
       - "127.0.0.1:27017:27017"
     networks:
@@ -22,7 +22,7 @@ services:
       - ./nextjs:/home/app
     ports:
       - "127.0.0.1:3005:3005"
-    command: tail -f /dev/null
+    #command: tail -f /dev/null
     networks:
       - dropmoji-net
       - tunnel-net
@@ -35,11 +35,14 @@ services:
     image: docker.io/ngrok/ngrok:alpine
     container_name: dropmoji-nj-tl_cnt
     volumes:
-      - ./init-ngrok.df.sec.yml:/etc/ngrok.yml
+      - ./init-ngrok.df.sec.yml:/etc/ngrok.yml:ro
+    ports:
+      - 4040:4040
     networks:
       - tunnel-net
-    command: tail -f /dev/null
-#ngrok http app:3005 --config=/etc/ngrok.yml
+    command: ["start","--all","--config","/etc/ngrok.yml"]
+    depends_on:
+      - app
 
 
 networks:
