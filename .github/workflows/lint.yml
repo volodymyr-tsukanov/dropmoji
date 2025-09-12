@@ -6,6 +6,8 @@ on:
     branches: [test]
     paths-ignore: ['.github/**','tools/**','*.md']
 
+permissions: read-all
+
 jobs:
   lint:
     # only run for 'feature/**' -> target branch test
