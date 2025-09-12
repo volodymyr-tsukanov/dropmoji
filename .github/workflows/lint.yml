@@ -3,29 +3,34 @@ name: Lint Codebase with Super Linter
 on:
   pull_request:
     # target branch of PR
-    branches: [test]
-    paths-ignore: ['.github/**','tools/**', '*.md']
+    branches: 
+      - test
+    paths-ignore:
+      - '.github/**'
+      - 'tools/**'
+      - '*.md'
 
 jobs:
   lint:
-    # only run for 'feature/**'->'dev'
-    if: github.head_ref && github.head_ref =~ '^feature\/'
-
+    # only run for 'feature/**' -> target branch test
+    if: ${{ github.head_ref && startsWith(github.head_ref, 'feature/') }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: read
 
     steps:
-      - name: Dbg
-        run: echo "src: ${{ github.head_ref }}"
-      - uses: actions/checkout@v5
+      - name: Checkout repo
+        uses: actions/checkout@v5
         with:
           # super-linter needs the full git history to get the list of files that changed across commits
           fetch-depth: 0
 
+      - name: Debug head_ref
+        run: echo "src: ${{ github.head_ref }}"
+
       - name: Run GitHub Super Linter
-        # latest as on 8/9/2025
+        # latest as of 8/9/2025
         uses: github/super-linter@v8.1.0
         env:
-          FILTER_REGEX_INCLUDE: 'nextjs/src/.*\.ts$'
+          FILTER_REGEX_INCLUDE: "nextjs/src/.*\\.ts$"
