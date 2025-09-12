@@ -31,6 +31,6 @@ jobs:
 
       - name: Run GitHub Super Linter
         # latest as of 8/9/2025
-        uses: github/super-linter@v7.1.0
+        uses: super-linter/super-linter@v8.1.0
         env:
           FILTER_REGEX_INCLUDE: "nextjs/src/.*\\.ts$"
