@@ -1,0 +1,39 @@
+name: Run Backend Tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '*.pdf'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # SKIP if PR is labeled with 'no-actions'
+    if: contains(join(github.event.pull_request.labels.*.name || '', ','), 'no-actions') == false
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_ENV: test
+      SEGMENT_DOWNLOAD_TIMEOUT_MINS: 5  # for actions/cache
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v5
+
+      - name: Use Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: ./nextjs/package-lock.json
+      - name: Cd
+        run: cd nextjs
+      - name: Install Backend Depts
+        run: npm ci
+
+      - name: Run Backend Tests
+        run: npm run lint
+
