@@ -4,6 +4,7 @@ Share emoji and GIF messages that self-destruct after one view
 **Typescript**, **NextJS**
 <br><br>
 
+![Paused](https://img.shields.io/badge/status-Paused%20%E2%8F%B8%EF%B8%8F-ADD8E6?style=for-the-badge&logo=github)
 
 Shields: [![AGPL-3.0][agpl3-shield]][agpl3]
 
